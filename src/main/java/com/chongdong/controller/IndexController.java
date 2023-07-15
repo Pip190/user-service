@@ -1,26 +1,22 @@
 package com.chongdong.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.chongdong.security.TokenManager;
 import com.chongdong.service.IndexService;
 import com.chongdong.utils.R;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/index")
-//@CrossOrigin
+@CrossOrigin
 public class IndexController {
 
-    @Autowired
+    @Resource
     private IndexService indexService;
-
-    @Autowired
-    TokenManager tokenManager;
 
     /**
      * 根据token获取用户信息
@@ -35,7 +31,7 @@ public class IndexController {
 
     /**
      * 获取菜单
-     * @return
+     * @return 菜单权限集合
      */
     @GetMapping("menu")
     public R getMenu(){

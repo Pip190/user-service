@@ -1,10 +1,6 @@
 package com.chongdong.controller;
 
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestUtil;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -35,7 +31,7 @@ public class UserController {
 
     /**
      * 添加用户
-     * @param user
+     * @param user 不需要用户id，传主要用户信息添加
      */
     @PostMapping
     public R add(@RequestBody User user) {
@@ -47,7 +43,7 @@ public class UserController {
 
     /**
      * 删除用户
-     * @param id
+     * @param id 根据Id来删除用户信息
      */
     @DeleteMapping("{id}")
     public R delete(@PathVariable("id") Long id) {
@@ -57,7 +53,7 @@ public class UserController {
 
     /**
      * 更新用户
-     * @param user
+     * @param user 用户信息，根据Id来更新信息
      */
     @PutMapping
     public R update(@RequestBody User user) {
@@ -69,8 +65,8 @@ public class UserController {
 
     /**
      * 查询用户
-     * @param id
-     * @return
+     * @param id 用户主键id
+     * @return 匹配该id的用户信息
      */
     @GetMapping("/{id}")
     public R findById(@PathVariable("id") Long id) {
@@ -82,7 +78,7 @@ public class UserController {
      * 分页查询所有用户
      * @param pageNum   第几页 不传默认第1页
      * @param pageSize  每页显示条数  不传默认为每页4条数据
-     * @return
+     * @return 分页查询所有用户信息
      */
     @PreAuthorize("@ss.hasPermission('user.list')")
     @GetMapping()
@@ -155,8 +151,8 @@ public class UserController {
      * @return 第三方是否发送验证码
      */
     @GetMapping("/verification")
-    public R verification(){
-        return Code.getR();
+    public R verification(String phoneNumber){
+        return Code.getR(phoneNumber);
     }
 
     @PostMapping("/verification")

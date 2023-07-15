@@ -5,19 +5,19 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chongdong.model.Role;
 import com.chongdong.service.RoleService;
 import com.chongdong.utils.R;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/role")
-//@CrossOrigin
+@CrossOrigin
 public class RoleController {
 
-    @Autowired
+    @Resource
     private RoleService roleService;
 
     @GetMapping("{page}/{limit}")
@@ -33,8 +33,8 @@ public class RoleController {
 
     /**
      * 添加角色
-     * @param role
-     * @return
+     * @param role 角色信息
+     * @return 添加成功
      */
     @PostMapping("save")
     public R save(@RequestBody Role role) {
@@ -44,8 +44,8 @@ public class RoleController {
 
     /**
      * 修改角色
-     * @param role
-     * @return
+     * @param role 角色信息，根据id进行更新
+     * @return 修改成功/失败
      */
     @PutMapping
     public R update(@RequestBody Role role) {
@@ -55,8 +55,8 @@ public class RoleController {
 
     /**
      * 删除角色
-     * @param id
-     * @return
+     * @param id 根据id进行删除
+     * @return 删除成功
      */
     @DeleteMapping("delete")
     public R delete(Long id) {
@@ -68,7 +68,7 @@ public class RoleController {
         Role role = roleService.getById(id);
         Map<String, Object> data = new HashMap<>();
         data.put("role",role);
-        return role!=null ? R.ok().data("role",role) : R.error();
+        return role!=null ? R.ok().data(data) : R.error();
     }
     @GetMapping()
     public R findAll(@RequestParam(defaultValue = "1") long pageNum,

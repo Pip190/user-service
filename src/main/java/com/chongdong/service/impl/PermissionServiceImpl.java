@@ -21,9 +21,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
-* @author wo
-* @description 针对表【tcd_permission(æƒé™)】的数据库操作Service实现
-* @createDate 2023-07-05 11:00:59
+* author wo
+* description 针对表【tcd_permission(权限表)】的数据库操作Service实现
+* createDate 2023-07-05 11:00:59
 */
 @Service
 public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permission>
@@ -36,16 +36,15 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     /**
      * 查询所有菜单树
-     * @return
+     * @return 所有菜单树
      */
     @Override
     public List<Permission> queryAllMenu() {
         QueryWrapper<Permission> wrapper = new QueryWrapper<>();
         wrapper.orderByDesc("id");
         List<Permission> permissionList = baseMapper.selectList(wrapper);
-        List<Permission> result = build(permissionList);
 
-        return result;
+        return build(permissionList);
     }
 
 
@@ -65,11 +64,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
                 permission.setSelect(false);
             }
         });*/
-        for (int i = 0; i < allPermissionList.size(); i++) {
-            Permission permission = allPermissionList.get(i);
-            for (int m = 0; m < rolePermissionList.size(); m++) {
-                RolePermission rolePermission = rolePermissionList.get(m);
-                if(rolePermission.getPermissionId().equals(permission.getId())) {
+        for (Permission permission : allPermissionList) {
+            for (RolePermission rolePermission : rolePermissionList) {
+                if (rolePermission.getPermissionId().equals(permission.getId())) {
                     // 设置为可选择
                     permission.setSelect(true);
                 }
@@ -77,8 +74,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         }
 
 
-        List<Permission> permissionList = build(allPermissionList);
-        return permissionList;
+        return build(allPermissionList);
     }
     // 给角色分配权限
     @Override
@@ -113,12 +109,15 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         List<String> selectPermissionValueList = null;
         if(this.isSysAdmin(id)) {
             // 如果是系统管理员，获取所有权限
-            selectPermissionValueList = baseMapper.selectAllPermissionValue();
-            System.out.println("是管理员所有权限\t"+selectPermissionValueList);
+            selectPermissionValueList = baseMapper.selectPermissionValueByAdmin();
+            System.out.println("系统管理员权限\t"+selectPermissionValueList);
+        } else if (this.isRoot(id)){
+            selectPermissionValueList = baseMapper.selectPermissionValueByRoot();
+            System.out.println("超级管理员权限\t");
         } else {
             // 根据角色获取权限
             selectPermissionValueList = baseMapper.selectPermissionValueByUserId(id);
-            System.out.println("非管理员所有权限\t"+selectPermissionValueList);
+            System.out.println("普通用户权限\t"+selectPermissionValueList);
         }
         return selectPermissionValueList;
     }

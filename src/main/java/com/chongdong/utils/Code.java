@@ -27,14 +27,14 @@ public class Code {
         return verificationCode;
     }
 
-    public static R getR() {
+    public static R getR(String phoneNumber) {
         verificationCode = RandomUtil.randomNumbers(4);
         // 设置短信服务商API URL
-        String apiUrl = "https://api.sms.com/send";
+        /*String apiUrl = "https://api.sms.com/send";
         // 设置请求参数
         Map<String, Object> params = new HashMap<>();
         params.put("apiKey", "your_api_key");
-        params.put("phoneNumber", "recipient_phone_number");
+        params.put("phoneNumber", phoneNumber);
         params.put("message", "Your verification code is: " + verificationCode);
 
         // 发送HTTP POST请求
@@ -46,10 +46,11 @@ public class Code {
         // 根据返回结果进行处理
         if (status == 200) {
             // 发送成功
-            return R.ok().message("验证码已发送");
+            return R.ok().message("验证码已发送").data("验证码：",verificationCode);
         } else {
             // 发送失败
             return R.error().message("电话号码错误，验证码发送失败");
-        }
+        }*/
+        return R.ok().message(verificationCode);
     }
 }

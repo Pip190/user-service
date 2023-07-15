@@ -13,13 +13,15 @@ import java.util.List;
 * @Entity com.chongdong.model.Permission
 */
 public interface PermissionMapper extends BaseMapper<Permission> {
-
-    // 查询所有权限值
-    List<String> selectAllPermissionValue();
+    // 超级管理员权限
+    List<String> selectPermissionValueByRoot();
+    // 系统管理员权限
+    List<String> selectPermissionValueByAdmin();
     // 通过用户id查询权限值
     List<String> selectPermissionValueByUserId(Long id);
     // 通过用户id查询权限表集合
     List<Permission> selectPermissionByUserId(Long userId);
+
 }
 
 
