@@ -43,7 +43,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         QueryWrapper<Permission> wrapper = new QueryWrapper<>();
         wrapper.orderByDesc("id");
         List<Permission> permissionList = baseMapper.selectList(wrapper);
-
+        for (Permission p:permissionList) {
+            p.setSelect(true);
+        }
         return build(permissionList);
     }
 
@@ -111,7 +113,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             // 如果是系统管理员，获取所有权限
             selectPermissionValueList = baseMapper.selectPermissionValueByAdmin();
             System.out.println("系统管理员权限\t"+selectPermissionValueList);
-        } else if (this.isRoot(id)){
+        } else if (this.isSysRoot(id)){
             selectPermissionValueList = baseMapper.selectPermissionValueByRoot();
             System.out.println("超级管理员权限\t");
         } else {
@@ -127,11 +129,15 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         List<Permission> selectPermissionList = null;
         if(this.isSysAdmin(userId)) {
             //如果是超级管理员，获取所有菜单
-            selectPermissionList = baseMapper.selectList(null);
+            selectPermissionList = baseMapper.selectPermissionByAdmin();
+            System.out.println("系统管理员selectPermissionList\t"+selectPermissionList);
+        } else if(this.isSysRoot(userId)){
+            selectPermissionList = baseMapper.selectPermissionByRoot();
             System.out.println("超级管理员selectPermissionList\t"+selectPermissionList);
-        } else {
+        }
+        else {
             selectPermissionList = baseMapper.selectPermissionByUserId(userId);
-            System.out.println("非超级管理员selectPermissionList\t"+selectPermissionList);
+            System.out.println("普通用户selectPermissionList\t"+selectPermissionList);
         }
 
         List<Permission> permissionList = PermissionHelper.build(selectPermissionList);
@@ -153,7 +159,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
      * @param userId 用户id
      * @return true/false
      */
-    private boolean isRoot(Long userId) {
+    private boolean isSysRoot(Long userId) {
         User user = userService.getById(userId);
         return null != user && "root".equals(user.getUsername());
     }

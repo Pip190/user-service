@@ -41,7 +41,7 @@ public class IndexServiceImpl implements IndexService {
         Map<String, Object> result = new HashMap<>();
         User user = userService.selectByUsername(username);
         if (null == user) {
-            //throw new GuliException(ResultCodeEnum.FETCH_USERINFO_ERROR);
+            // throw new GuliException(ResultCodeEnum.FETCH_USERINFO_ERROR);
         }
 
         //根据用户id获取角色
@@ -70,10 +70,8 @@ public class IndexServiceImpl implements IndexService {
      */
     public List<JSONObject> getMenu(String username) {
         User user = userService.selectByUsername(username);
-
         //根据用户id获取用户菜单权限
-        List<JSONObject> permissionList = permissionService.selectPermissionByUserId(user.getId());
-        return permissionList;
+        return permissionService.selectPermissionByUserId(user.getId());
     }
 
 

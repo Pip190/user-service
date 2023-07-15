@@ -31,7 +31,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
      * @param roleIds    角色id数组
      */
     @Override
-    public void saveUserRoleRealtionShip(Long userId, Long[] roleIds) {
+    public void saveUserRoleRelationShip(Long userId, Long[] roleIds) {
         userRoleService.remove(new QueryWrapper<UserRole>().eq("user_id", userId));
         List<UserRole> userRoleList = new ArrayList<>();
         for(Long roleId : roleIds) {

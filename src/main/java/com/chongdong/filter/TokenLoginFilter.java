@@ -61,7 +61,7 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
         // 根据用户名生成token
         String token = tokenManager.createToken(user.getCurrentUserInfo().getUsername());
         // 把用户名称和用户权限列表放到redis
-//        redisTemplate.opsForValue().set(user.getCurrentUserInfo().getUsername(),user.getPermissionValueList());
+        redisTemplate.opsForValue().set(user.getCurrentUserInfo().getUsername(),user.getPermissionValueList());
         /*User newUser = user.getCurrentUserInfo().setToken(token);
         user.setCurrentUserInfo(newUser);
         这里就是登录，匹配密码成功之后，把获取到的token、用户信息，菜单权限放在redis，，redis的前缀就是：oauth::{用户名}
@@ -69,7 +69,7 @@ public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
         Map<String,Object> dataMap = new HashMap<>();
         dataMap.put("user",user.getCurrentUserInfo().setToken(token));
         dataMap.put("authorities",user.getAuthorities());
-        redisTemplate.opsForValue().set(user.getCurrentUserInfo().getUsername(), JSONObject.toJSONString(dataMap),24, TimeUnit.HOURS);
+//        redisTemplate.opsForValue().set(user.getCurrentUserInfo().getUsername(), JSONObject.toJSONString(dataMap),24, TimeUnit.HOURS);
         // 放回token10
         Map<String,Object> returnInfo = new HashMap<>();
         returnInfo.put("user",user.getUsername());

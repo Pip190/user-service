@@ -102,12 +102,11 @@ public class UserController {
         IPage<User> pageModel = userService.page(pageParam, wrapper);
         return R.ok().data("items", pageModel.getRecords()).data("total", pageModel.getTotal());
     }
-
+    @PreAuthorize("@ss.hasPermission('user.add')")
     @PostMapping("save")
     public R save(/*@RequestBody*/ User user) {
         user.setPassword(DigestUtil.md5Hex(user.getPassword()));
-        userService.save(user);
-        return R.ok();
+        return userService.save(user) ? R.ok() : R.error();
     }
 
     @GetMapping("/toAssign/{userId}")
@@ -131,7 +130,7 @@ public class UserController {
      */
     @PostMapping("/doAssign")
     public R doAssign(@RequestParam Long userId, @RequestParam Long[] roleId) {
-        roleService.saveUserRoleRealtionShip(userId,roleId);
+        roleService.saveUserRoleRelationShip(userId,roleId);
         return R.ok();
     }
 

@@ -56,10 +56,10 @@ public class TokenAuthFilter extends BasicAuthenticationFilter {
             // 从token获取用户名
             String username = tokenManager.getUserInfoFromToken(token);
             // 从redis获取对应权限列表
-            String authStr = (String) redisTemplate.opsForValue().get(username);
+            /*String authStr = (String) redisTemplate.opsForValue().get(username);
             if (StringUtils.isEmpty(authStr)){
                 throw new RuntimeException("未获取到登录信息");
-            }
+            }*/
             /*
             然后你不是其他接口要访问服务嘛，这里是个鉴权的拦截器，  就是这个只要登陆就有访问路径的权力，不是那种动态权限控制嘛？
             现在authority这个对象里面不是已经有了他的那些菜单权限了嘛，你再获取到当前是属于哪个操作。比如删除什么东西的权限是：user::delete,那你现在不是已经
@@ -69,18 +69,24 @@ public class TokenAuthFilter extends BasicAuthenticationFilter {
 做个实验：现在是不是只有admin登录了？那我们把访问接口的token头的值稍微改一下
 
              */
-            JSONObject object = JSONObject.parseObject(authStr, JSONObject.class);
+            /*JSONObject object = JSONObject.parseObject(authStr, JSONObject.class);
             JSONArray authorities = object.getJSONArray("authorities");
             Collection<GrantedAuthority> authority = new ArrayList<>();
             authorities.forEach(info -> {
                 JSONObject parsed = JSONObject.parseObject(JSONObject.toJSONString(info));
                 authority.add(new SimpleGrantedAuthority(parsed.getString("authority")));
-            });
+            });*/
             /*for(JSONObject permissionValue : authorities) {
                 JSONObject.parseObject()
 
                 authority.add(auth);
             }*/
+            List<String> permissionValueList = (List<String>) redisTemplate.opsForValue().get(username);
+            Collection<GrantedAuthority> authority = new ArrayList<>();
+            for (String permissionValue: permissionValueList) {
+                SimpleGrantedAuthority auth = new SimpleGrantedAuthority(permissionValue);
+                authority.add(auth);
+            }
             return new UsernamePasswordAuthenticationToken(username,token,authority);
         }
         return null;

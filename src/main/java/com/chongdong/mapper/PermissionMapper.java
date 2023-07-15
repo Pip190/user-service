@@ -21,6 +21,8 @@ public interface PermissionMapper extends BaseMapper<Permission> {
     List<String> selectPermissionValueByUserId(Long id);
     // 通过用户id查询权限表集合
     List<Permission> selectPermissionByUserId(Long userId);
+    List<Permission> selectPermissionByRoot();
+    List<Permission> selectPermissionByAdmin();
 
 }
 
