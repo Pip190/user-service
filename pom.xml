@@ -91,9 +91,9 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
             <version>${cloud-alibaba.version}</version>
-        </dependency>-->
-        <!--openfeign-->
-        <!--<dependency>
+        </dependency>
+        &lt;!&ndash;openfeign&ndash;&gt;
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
             <version>2.2.1.RELEASE</version>

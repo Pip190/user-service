@@ -2,6 +2,9 @@ package com.chongdong.mapper;
 
 import com.chongdong.model.Role;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
 * @author wo
@@ -11,6 +14,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface RoleMapper extends BaseMapper<Role> {
 
+    @Select("select role_id from tcd_user_role where user_id = #{userId}")
+    Long[] selectRoleIdByUserId(Long userId);
 }
 
 

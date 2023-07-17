@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 /**
 * @author wo
-* @description 针对表【tcd_role(è§’è‰²è¡¨)】的数据库操作Service实现
+* @description 针对表【tcd_role(角色表)】的数据库操作Service实现
 * @createDate 2023-07-05 11:00:59
 */
 @Service
@@ -32,18 +32,35 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
      */
     @Override
     public void saveUserRoleRelationShip(Long userId, Long[] roleIds) {
-        userRoleService.remove(new QueryWrapper<UserRole>().eq("user_id", userId));
         List<UserRole> userRoleList = new ArrayList<>();
         for(Long roleId : roleIds) {
             if(StringUtils.isEmpty(roleId)) continue;
             UserRole userRole = new UserRole();
-            userRole.setUserId(userId);
-            userRole.setRoleId(roleId);
-            userRole.setCreateTime(new Date());
+            if(userRoleService.existUserRoleRelation(userId,roleId)){
+                QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("user_id",userId).eq("role_id",roleId);
+                userRole = userRoleService.getOne(queryWrapper);
+                userRole.setUpdateTime(new Date());
+                userRole.setIsDeleted(0);
+
+            }else {
+                userRole.setUserId(userId);
+                userRole.setRoleId(roleId);
+                userRole.setCreateTime(new Date());
+            }
             userRoleList.add(userRole);
         }
-        userRoleService.saveBatch(userRoleList);
-
+        userRoleService.saveOrUpdateBatch(userRoleList);
+        // 改删除状态
+        Long[] roleIdByUserId = baseMapper.selectRoleIdByUserId(userId);
+        List<Long> notInArray = getElementsNotInArray(roleIdByUserId, roleIds);
+        for (Long removeRoleId:notInArray) {
+            QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("user_id",userId).eq("role_id",removeRoleId);
+            UserRole deleteUserRole = userRoleService.getOne(queryWrapper);
+            deleteUserRole.setIsDeleted(1);
+            userRoleService.update(deleteUserRole,new QueryWrapper<UserRole>().eq("role_id",removeRoleId).eq("user_id",userId));
+        }
     }
     //根据用户获取角色数据
     @Override
@@ -77,6 +94,24 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
             roleList = baseMapper.selectBatchIds(roleIdList);
         }
         return roleList;
+    }
+
+
+    public static List<Long> getElementsNotInArray(Long[] dataBaseArray, Long[] inputArray) {
+        List<Long> result = new ArrayList<>();
+        for (Long i : dataBaseArray) {
+            boolean found = false;
+            for (Long j : inputArray) {
+                if (Objects.equals(i, j)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                result.add(i);
+            }
+        }
+        return result;
     }
 }
 

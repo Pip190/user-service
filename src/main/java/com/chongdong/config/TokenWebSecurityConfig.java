@@ -63,6 +63,6 @@ public class TokenWebSecurityConfig extends WebSecurityConfigurerAdapter {
     //不进行认证的路径，可以直接访问
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/api/**");
+        web.ignoring().antMatchers("/user/**");
     }
 }

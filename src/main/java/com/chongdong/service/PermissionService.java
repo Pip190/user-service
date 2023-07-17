@@ -22,7 +22,7 @@ public interface PermissionService extends IService<Permission> {
     List<Permission> selectAllMenu(Long roleId);
 
     //给角色分配权限
-    void saveRolePermissionRealtionShip(Long roleId, Long[] permissionId);
+    void saveRolePermissionRelationShip(Long roleId, Long[] permissionId);
 
     //递归删除菜单
     void removeChildById(Long id);

@@ -2,6 +2,8 @@ package com.chongdong.service.impl;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chongdong.model.User;
 import com.chongdong.service.UserService;
@@ -13,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
 * @author wo
@@ -55,6 +59,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             redisTemplate.delete(userByLogonUser.getUsername());
         }
         return update ? R.ok() : R.error();
+    }
+
+    @Override
+    public R listUserByUsernameOrNickname(Long pageNum,Long pageSize,User userQueryVo) {
+        Page<User> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        if (!StringUtils.isEmpty(userQueryVo.getUsername())){
+            queryWrapper.like("username",userQueryVo.getUsername());
+        }
+        if (!StringUtils.isEmpty(userQueryVo.getNickName())){
+            queryWrapper.like("nick_name",userQueryVo.getNickName());
+        }
+        Page<User> result = this.page(page, queryWrapper);
+        Map<String, Object> data = new HashMap<>();
+        data.put("user",result);
+        return result!=null ? R.ok().data(data) : R.error();
     }
 }
 

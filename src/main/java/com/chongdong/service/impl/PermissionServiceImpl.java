@@ -80,7 +80,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     }
     // 给角色分配权限
     @Override
-    public void saveRolePermissionRealtionShip(Long roleId, Long[] permissionIds) {
+    public void saveRolePermissionRelationShip(Long roleId, Long[] permissionIds) {
 
         rolePermissionService.remove(new QueryWrapper<RolePermission>().eq("role_id", roleId));
 
@@ -115,7 +115,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             System.out.println("系统管理员权限\t"+selectPermissionValueList);
         } else if (this.isSysRoot(id)){
             selectPermissionValueList = baseMapper.selectPermissionValueByRoot();
-            System.out.println("超级管理员权限\t");
+            System.out.println("超级管理员权限\t"+selectPermissionValueList);
         } else {
             // 根据角色获取权限
             selectPermissionValueList = baseMapper.selectPermissionValueByUserId(id);

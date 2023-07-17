@@ -1,10 +1,6 @@
 package com.chongdong.controller;
 
 import cn.hutool.crypto.digest.DigestUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chongdong.model.User;
 import com.chongdong.service.RoleService;
 import com.chongdong.service.UserService;
@@ -15,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -26,13 +21,12 @@ public class UserController {
     UserService userService;
     @Resource
     private RoleService roleService;
-    
-
 
     /**
      * 添加用户
      * @param user 不需要用户id，传主要用户信息添加
      */
+    @PreAuthorize("@ss.hasPermission('user.add')")
     @PostMapping
     public R add(@RequestBody User user) {
         user.setCreateTime(new Date());
@@ -83,30 +77,9 @@ public class UserController {
     @PreAuthorize("@ss.hasPermission('user.list')")
     @GetMapping()
     public R findAll(@RequestParam(defaultValue = "1") long pageNum,
-                     @RequestParam(defaultValue = "4") long pageSize) {
-        Page<User> page = new Page<>(pageNum, pageSize);
-        Page<User> result = userService.page(page, new QueryWrapper<>());
-        Map<String, Object> data = new HashMap<>();
-        data.put("user",result);
-        return result!=null ? R.ok().data(data) : R.error();
-    }
-
-
-    @GetMapping("{page}/{limit}")
-    public R index(@PathVariable Long page, @PathVariable Long limit, User userQueryVo) {
-        Page<User> pageParam = new Page<>(page, limit);
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        if(!StringUtils.isEmpty(userQueryVo.getUsername())) {
-            wrapper.like("username",userQueryVo.getUsername());
-        }
-        IPage<User> pageModel = userService.page(pageParam, wrapper);
-        return R.ok().data("items", pageModel.getRecords()).data("total", pageModel.getTotal());
-    }
-    @PreAuthorize("@ss.hasPermission('user.add')")
-    @PostMapping("save")
-    public R save(/*@RequestBody*/ User user) {
-        user.setPassword(DigestUtil.md5Hex(user.getPassword()));
-        return userService.save(user) ? R.ok() : R.error();
+                     @RequestParam(defaultValue = "4") long pageSize,
+                     User userQueryVo) {
+        return userService.listUserByUsernameOrNickname(pageNum,pageSize,userQueryVo);
     }
 
     @GetMapping("/toAssign/{userId}")
