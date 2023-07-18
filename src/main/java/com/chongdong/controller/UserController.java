@@ -41,8 +41,7 @@ public class UserController {
      */
     @DeleteMapping("{id}")
     public R delete(@PathVariable("id") Long id) {
-        boolean removeById = userService.removeById(id);
-        return removeById ? R.ok() : R.error();
+        return  userService.deleteUserById(id);
     }
 
     /**
@@ -74,7 +73,6 @@ public class UserController {
      * @param pageSize  每页显示条数  不传默认为每页4条数据
      * @return 分页查询所有用户信息
      */
-    @PreAuthorize("@ss.hasPermission('user.list')")
     @GetMapping()
     public R findAll(@RequestParam(defaultValue = "1") long pageNum,
                      @RequestParam(defaultValue = "4") long pageSize,

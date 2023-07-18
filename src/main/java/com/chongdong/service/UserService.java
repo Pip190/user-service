@@ -24,4 +24,6 @@ public interface UserService extends IService<User> {
     R updatePasswordByVerification(String userInputCode, String newPassword);
 
     R listUserByUsernameOrNickname(Long pageNum,Long pageSize,User userQueryVo);
+
+    R deleteUserById(Long id);
 }

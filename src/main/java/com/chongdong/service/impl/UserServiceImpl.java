@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,6 +76,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Map<String, Object> data = new HashMap<>();
         data.put("user",result);
         return result!=null ? R.ok().data(data) : R.error();
+    }
+
+    @Override
+    public R deleteUserById(Long id) {
+        User byId = this.getById(id);
+        byId.setIsDeleted(1);
+        byId.setUpdateTime(new Date());
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id",id);
+        boolean update = this.update(byId, queryWrapper);
+        return update ? R.ok() : R.error();
     }
 }
 

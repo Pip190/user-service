@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,24 +21,14 @@ public class RoleController {
     @Resource
     private RoleService roleService;
 
-    @GetMapping("{page}/{limit}")
-    public R index(@PathVariable Long page, @PathVariable Long limit, Role role) {
-        Page<Role> pageParam = new Page<>(page, limit);
-        QueryWrapper<Role> wrapper = new QueryWrapper<>();
-        if(!StringUtils.isEmpty(role.getRoleName())) {
-            wrapper.like("role_name",role.getRoleName());
-        }
-        roleService.page(pageParam,wrapper);
-        return R.ok().data("items", pageParam.getRecords()).data("total", pageParam.getTotal());
-    }
-
     /**
      * 添加角色
      * @param role 角色信息
      * @return 添加成功
      */
-    @PostMapping("save")
+    @PostMapping()
     public R save(@RequestBody Role role) {
+        role.setCreateTime(new Date());
         roleService.save(role);
         return R.ok();
     }
@@ -49,6 +40,7 @@ public class RoleController {
      */
     @PutMapping
     public R update(@RequestBody Role role) {
+        role.setUpdateTime(new Date());
         boolean updateById = roleService.updateById(role);
         return updateById ? R.ok() : R.error();
     }
@@ -58,10 +50,9 @@ public class RoleController {
      * @param id 根据id进行删除
      * @return 删除成功
      */
-    @DeleteMapping("delete")
+    @DeleteMapping()
     public R delete(Long id) {
-        roleService.removeById(id);
-        return R.ok();
+        return roleService.deleteById(id);
     }
     @GetMapping("/{id}")
     public R findById(@PathVariable Long id) {
@@ -70,11 +61,16 @@ public class RoleController {
         data.put("role",role);
         return role!=null ? R.ok().data(data) : R.error();
     }
-    @GetMapping()
+    @GetMapping("list")
     public R findAll(@RequestParam(defaultValue = "1") long pageNum,
-                     @RequestParam(defaultValue = "4") long pageSize) {
+                     @RequestParam(defaultValue = "4") long pageSize,
+                     Role roleQueryVo) {
         Page<Role> page = new Page<>(pageNum, pageSize);
-        Page<Role> result = roleService.page(page, new QueryWrapper<>());
+        QueryWrapper<Role> queryLikeRoleName = new QueryWrapper<>();
+        if(!StringUtils.isEmpty(roleQueryVo.getRoleName())) {
+            queryLikeRoleName.like("role_name",roleQueryVo.getRoleName());
+        }
+        Page<Role> result = roleService.page(page, queryLikeRoleName);
         return result != null ? R.ok().data("role",result) : R.error();
     }
 }

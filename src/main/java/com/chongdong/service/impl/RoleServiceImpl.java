@@ -7,6 +7,7 @@ import com.chongdong.model.UserRole;
 import com.chongdong.service.RoleService;
 import com.chongdong.mapper.RoleMapper;
 import com.chongdong.service.UserRoleService;
+import com.chongdong.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -82,6 +83,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         roleMap.put("assignRoles", assignRoles);
         roleMap.put("allRolesList", allRolesList);
         return roleMap;
+    }
+
+    @Override
+    public R deleteById(Long id) {
+        Role byId = this.getById(id);
+        byId.setUpdateTime(new Date());
+        byId.setIsDeleted(1);
+        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id",id);
+        boolean update = this.update(byId, queryWrapper);
+        return update ? R.ok() : R.error();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.chongdong.service;
 
 import com.chongdong.model.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chongdong.utils.R;
 
 import java.util.List;
 import java.util.Map;
@@ -24,4 +25,6 @@ public interface RoleService extends IService<Role> {
 
     //根据用户获取角色数据
     Map<String, Object> findRoleByUserId(Long userId);
+
+    R deleteById(Long id);
 }
